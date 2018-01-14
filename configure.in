@@ -1,14 +1,15 @@
 #                                               -*- Autoconf -*-
 # Process this file with autoconf to produce a configure script.
-version=`cat VERSION`
-cwd=`pwd`
 
 AC_PREREQ(2.57)
-AC_INIT(email, 3, <dean.nospam@dean.nospam.proxy.com>)
+AC_INIT(email, 3.1.3, <deanjones@cleancode.org>)
 AC_CONFIG_SRCDIR([src/addr_parse.c])
 AC_CONFIG_HEADER([include/config.h])
 AC_GNU_SOURCE
 
+version="3.1.3"
+date="10/31/2010-01:13:35PM_EDT"
+cwd=`pwd`
 
 # Checks for programs.
 AC_PROG_CC
@@ -67,7 +68,7 @@ fi
 AC_SUBST(ver, ["$version"])
 
 CFLAGS="$CFLAGS -I$cwd -I$cwd/src -I$cwd/include -I../include -I$cwd/dlib/include"
-CFLAGS="$CFLAGS -I../dlib/include -DEMAIL_VERSION='\"$version\"' "
+CFLAGS="$CFLAGS -I../dlib/include -DEMAIL_VERSION='\"$version\"' -DCOMPILE_DATE='\"$date\"'"
 CFLAGS="$CFLAGS -DEMAIL_DIR='\"${sysconfdir}/email\"'"
 
 AC_CONFIG_FILES([Makefile

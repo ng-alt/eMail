@@ -88,11 +88,11 @@ static int
 readResponse(dsocket *sd, dstrbuf *buf)
 {
 	int retval=ERROR;
+	int read_size = 0;
 	dstrbuf *tmpbuf = DSB_NEW;
 	struct timeval tv;
 	fd_set rfds;
 	char *timeout = getConfValue("TIMEOUT");
-	int readsize = 0;
 
 	FD_ZERO(&rfds);
 	FD_SET(dnetGetSock(sd), &rfds);
@@ -106,9 +106,14 @@ readResponse(dsocket *sd, dstrbuf *buf)
 	if (FD_ISSET(dnetGetSock(sd), &rfds)) {
 		do {
 			dsbClear(tmpbuf);
-			readsize = dnetReadline(sd, tmpbuf);
-			if ((dnetErr(sd)) || (readsize <= 0)) {
+			read_size = dnetReadline(sd, tmpbuf);
+			if (dnetErr(sd)) {
 				smtpSetErr("Lost connection with SMTP server");
+				retval = ERROR;
+				break;
+			}
+			if(read_size == 0) {	//Sam, 2014/11/24
+				smtpSetErr("Read socket but no data");
 				retval = ERROR;
 				break;
 			}
@@ -783,10 +788,17 @@ smtpSendData(dsocket *sd, const char *data, size_t len)
 	assert(sd != NULL);
 
 	/* Write the data to the socket. */
-	dnetWrite(sd, data, len);
+	retval = dnetWrite(sd, data, len);
 	if (dnetErr(sd)) {
 		smtpSetErr("Error writing to socket.");
 		retval = ERROR;
+	}
+	if(retval <=0) {	//Sam, 2014/11/24
+		smtpSetErr("Write data unsuccessfully.");
+		retval = ERROR;
+	}
+	else {
+		retval = SUCCESS;
 	}
 	return retval;
 }

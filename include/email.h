@@ -41,9 +41,13 @@
 #define TMPFILE_TEMPLATE "/tmp/.email.msg.XXXXXX"
 #define TMPFILE_TEMPLATE_SIZE 23
 
+#define EMAIL_LOG_FILE	"/tmp/email.log"
+
 /* EMAIL_DIR determined at compile time */
 #define MAIN_CONFIG  EMAIL_DIR"/email.conf"
 #define EMAIL_HELP_FILE   EMAIL_DIR"/email.help"
+
+#define DEBUG_SMTP 1
 
 /* Debugger */
 #define DEBUG(str)                             \
